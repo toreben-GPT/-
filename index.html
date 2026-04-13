@@ -21,9 +21,7 @@
         --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
       }
 
-      * {
-        box-sizing: border-box;
-      }
+      * { box-sizing: border-box; }
 
       body {
         margin: 0;
@@ -39,9 +37,7 @@
         padding: 20px 16px 32px;
       }
 
-      .header {
-        margin-bottom: 16px;
-      }
+      .header { margin-bottom: 16px; }
 
       .title {
         margin: 0;
@@ -70,11 +66,10 @@
         display: grid;
         gap: 8px;
         margin-bottom: 14px;
+        justify-items: start;
       }
 
-      .field:last-child {
-        margin-bottom: 0;
-      }
+      .field:last-child { margin-bottom: 0; }
 
       label {
         font-size: 0.95rem;
@@ -82,14 +77,22 @@
       }
 
       input[type="date"] {
-        width: 100%;
-        min-height: 48px;
+        width: min(100%, 260px);
+        min-height: 44px;
         border-radius: 14px;
         border: 1px solid var(--border);
         padding: 10px 12px;
         background: #fff;
         color: var(--text);
-        font-size: 1rem;
+        font-size: 0.98rem;
+        justify-self: start;
+      }
+
+      input[type="date"]::-webkit-date-and-time-value { text-align: center; }
+      input[type="date"]::-webkit-datetime-edit { padding: 0; }
+      input[type="date"]::-webkit-calendar-picker-indicator {
+        margin: 0;
+        opacity: 0.75;
       }
 
       .button-row {
@@ -189,15 +192,19 @@
         border-color: transparent;
       }
 
-      .plain-black {
-        color: var(--text);
-      }
+      .plain-black { color: var(--text); }
 
       .footer-note {
         margin-top: 12px;
         font-size: 0.82rem;
         color: var(--sub);
         line-height: 1.5;
+      }
+
+      @media (max-width: 420px) {
+        .wrap { padding: 18px 14px 28px; }
+        .card, .result-card { padding: 14px; }
+        input[type="date"] { width: min(100%, 240px); }
       }
     </style>
   </head>
