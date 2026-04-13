@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>契約→着工→引渡 計算アプリ</title>
+    <style>
+      :root {
+        --bg: #f5f7fb;
+        --card: #ffffff;
+        --text: #111827;
+        --sub: #6b7280;
+        --border: #dbe2ea;
+        --danger: #d92d20;
+        --green-bg: #e8f7ed;
+        --green-text: #157347;
+        --orange-bg: #fff3e6;
+        --orange-text: #b45309;
+        --blue-bg: #eaf2ff;
+        --blue-text: #1d4ed8;
+        --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+      }
+
+      .wrap {
+        max-width: 480px;
+        margin: 0 auto;
+        min-height: 100dvh;
+        padding: 20px 16px 32px;
+      }
+
+      .header {
+        margin-bottom: 16px;
+      }
+
+      .title {
+        margin: 0;
+        font-size: 1.4rem;
+        font-weight: 800;
+        letter-spacing: 0.01em;
+      }
+
+      .subtitle {
+        margin: 8px 0 0;
+        font-size: 0.95rem;
+        color: var(--sub);
+        line-height: 1.5;
+      }
+
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        box-shadow: var(--shadow);
+        padding: 16px;
+        margin-bottom: 14px;
+      }
+
+      .field {
+        display: grid;
+        gap: 8px;
+        margin-bottom: 14px;
+      }
+
+      .field:last-child {
+        margin-bottom: 0;
+      }
+
+      label {
+        font-size: 0.95rem;
+        font-weight: 700;
+      }
+
+      input[type="date"] {
+        width: 100%;
+        min-height: 48px;
+        border-radius: 14px;
+        border: 1px solid var(--border);
+        padding: 10px 12px;
+        background: #fff;
+        color: var(--text);
+        font-size: 1rem;
+      }
+
+      .button-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      button {
+        min-height: 50px;
+        border: none;
+        border-radius: 16px;
+        font-size: 1rem;
+        font-weight: 800;
+        cursor: pointer;
+      }
+
+      .primary {
+        background: #111827;
+        color: #fff;
+      }
+
+      .secondary {
+        background: #eef2f7;
+        color: #111827;
+      }
+
+      .error {
+        display: none;
+        margin-top: 12px;
+        border-radius: 14px;
+        padding: 12px 14px;
+        background: #fff1f1;
+        color: var(--danger);
+        font-size: 0.95rem;
+        font-weight: 700;
+        line-height: 1.5;
+      }
+
+      .results {
+        display: grid;
+        gap: 12px;
+      }
+
+      .result-card {
+        border-radius: 18px;
+        padding: 16px;
+        border: 1px solid var(--border);
+        background: #fff;
+      }
+
+      .result-label {
+        font-size: 0.92rem;
+        font-weight: 700;
+        color: var(--sub);
+        margin-bottom: 8px;
+      }
+
+      .result-value {
+        display: flex;
+        align-items: baseline;
+        gap: 6px;
+      }
+
+      .days {
+        font-size: 2rem;
+        font-weight: 900;
+        line-height: 1;
+      }
+
+      .unit {
+        font-size: 1rem;
+        font-weight: 800;
+      }
+
+      .hint {
+        margin-top: 8px;
+        font-size: 0.85rem;
+        color: var(--sub);
+      }
+
+      .status-green {
+        background: var(--green-bg);
+        color: var(--green-text);
+        border-color: transparent;
+      }
+
+      .status-orange {
+        background: var(--orange-bg);
+        color: var(--orange-text);
+        border-color: transparent;
+      }
+
+      .status-blue {
+        background: var(--blue-bg);
+        color: var(--blue-text);
+        border-color: transparent;
+      }
+
+      .plain-black {
+        color: var(--text);
+      }
+
+      .footer-note {
+        margin-top: 12px;
+        font-size: 0.82rem;
+        color: var(--sub);
+        line-height: 1.5;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="wrap">
+      <section class="header">
+        <h1 class="title">契約→着工→引渡 計算</h1>
+        <p class="subtitle">契約日から100日後に着工日、着工日から100日後に引渡日を自動入力します。</p>
+      </section>
+
+      <section class="card">
+        <div class="field">
+          <label for="contractDate">契約日</label>
+          <input id="contractDate" type="date" />
+        </div>
+
+        <div class="field">
+          <label for="startDate">着工日</label>
+          <input id="startDate" type="date" />
+        </div>
+
+        <div class="field">
+          <label for="handoverDate">引渡日</label>
+          <input id="handoverDate" type="date" />
+        </div>
+
+        <div class="button-row">
+          <button class="primary" id="autoCalcBtn">100日で自動計算</button>
+          <button class="secondary" id="resetBtn">リセット</button>
+        </div>
+
+        <div class="error" id="errorBox"></div>
+      </section>
+
+      <section class="results">
+        <article class="result-card" id="contractToStartCard">
+          <div class="result-label">契約→着工</div>
+          <div class="result-value">
+            <div class="days" id="contractToStartDays">-</div>
+            <div class="unit">日</div>
+          </div>
+          <div class="hint">100日以内で緑、101〜120日でオレンジ、121日以上で青</div>
+        </article>
+
+        <article class="result-card plain-black" id="startToHandoverCard">
+          <div class="result-label">着工→引渡</div>
+          <div class="result-value">
+            <div class="days" id="startToHandoverDays">-</div>
+            <div class="unit">日</div>
+          </div>
+        </article>
+      </section>
+
+      <p class="footer-note">※ 初日は含まず、土日祝を無視した暦日ベースで計算します。</p>
+    </main>
+
+    <script>
+      const contractDate = document.getElementById('contractDate');
+      const startDate = document.getElementById('startDate');
+      const handoverDate = document.getElementById('handoverDate');
+      const autoCalcBtn = document.getElementById('autoCalcBtn');
+      const resetBtn = document.getElementById('resetBtn');
+      const errorBox = document.getElementById('errorBox');
+      const contractToStartDays = document.getElementById('contractToStartDays');
+      const startToHandoverDays = document.getElementById('startToHandoverDays');
+      const contractToStartCard = document.getElementById('contractToStartCard');
+
+      function parseLocalDate(value) {
+        if (!value) return null;
+        const [y, m, d] = value.split('-').map(Number);
+        return new Date(y, m - 1, d);
+      }
+
+      function formatLocalDate(date) {
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const d = String(date.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
+      }
+
+      function addDays(date, days) {
+        const newDate = new Date(date);
+        newDate.setDate(newDate.getDate() + days);
+        return newDate;
+      }
+
+      function diffDays(fromDate, toDate) {
+        const msPerDay = 24 * 60 * 60 * 1000;
+        const utc1 = Date.UTC(fromDate.getFullYear(), fromDate.getMonth(), fromDate.getDate());
+        const utc2 = Date.UTC(toDate.getFullYear(), toDate.getMonth(), toDate.getDate());
+        return Math.round((utc2 - utc1) / msPerDay);
+      }
+
+      function showError(message) {
+        errorBox.textContent = message;
+        errorBox.style.display = 'block';
+      }
+
+      function clearError() {
+        errorBox.textContent = '';
+        errorBox.style.display = 'none';
+      }
+
+      function resetContractToStartColor() {
+        contractToStartCard.classList.remove('status-green', 'status-orange', 'status-blue');
+      }
+
+      function applyContractToStartColor(days) {
+        resetContractToStartColor();
+        if (days <= 100) {
+          contractToStartCard.classList.add('status-green');
+        } else if (days <= 120) {
+          contractToStartCard.classList.add('status-orange');
+        } else {
+          contractToStartCard.classList.add('status-blue');
+        }
+      }
+
+      function validateDates() {
+        const contract = parseLocalDate(contractDate.value);
+        const start = parseLocalDate(startDate.value);
+        const handover = parseLocalDate(handoverDate.value);
+
+        if (contract && start && start <= contract) {
+          showError('着工日は契約日より後にしてください。');
+          return false;
+        }
+
+        if (start && handover && handover <= start) {
+          showError('引渡日は着工日より後にしてください。');
+          return false;
+        }
+
+        clearError();
+        return true;
+      }
+
+      function renderResults() {
+        const contract = parseLocalDate(contractDate.value);
+        const start = parseLocalDate(startDate.value);
+        const handover = parseLocalDate(handoverDate.value);
+
+        if (!validateDates()) {
+          contractToStartDays.textContent = '-';
+          startToHandoverDays.textContent = '-';
+          resetContractToStartColor();
+          return;
+        }
+
+        if (contract && start) {
+          const days = diffDays(contract, start);
+          contractToStartDays.textContent = String(days);
+          applyContractToStartColor(days);
+        } else {
+          contractToStartDays.textContent = '-';
+          resetContractToStartColor();
+        }
+
+        if (start && handover) {
+          const days = diffDays(start, handover);
+          startToHandoverDays.textContent = String(days);
+        } else {
+          startToHandoverDays.textContent = '-';
+        }
+      }
+
+      autoCalcBtn.addEventListener('click', () => {
+        if (!contractDate.value) {
+          showError('契約日を入力してください。');
+          return;
+        }
+
+        clearError();
+        const contract = parseLocalDate(contractDate.value);
+        const autoStart = addDays(contract, 100);
+        const autoHandover = addDays(autoStart, 100);
+
+        startDate.value = formatLocalDate(autoStart);
+        handoverDate.value = formatLocalDate(autoHandover);
+        renderResults();
+      });
+
+      startDate.addEventListener('change', () => {
+        const start = parseLocalDate(startDate.value);
+        if (start) {
+          handoverDate.value = formatLocalDate(addDays(start, 100));
+        }
+        renderResults();
+      });
+
+      contractDate.addEventListener('change', renderResults);
+      handoverDate.addEventListener('change', renderResults);
+
+      resetBtn.addEventListener('click', () => {
+        contractDate.value = '';
+        startDate.value = '';
+        handoverDate.value = '';
+        contractToStartDays.textContent = '-';
+        startToHandoverDays.textContent = '-';
+        resetContractToStartColor();
+        clearError();
+      });
+
+      renderResults();
+    </script>
+  </body>
+</html>
