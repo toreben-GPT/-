@@ -76,7 +76,8 @@
         font-weight: 700;
       }
 
-      input[type="date"] {
+      input[type="date"],
+      input[type="text"] {
         width: min(100%, 260px);
         min-height: 44px;
         border-radius: 14px;
@@ -86,6 +87,11 @@
         color: var(--text);
         font-size: 0.98rem;
         justify-self: start;
+      }
+
+      input[type="text"] {
+        width: 100%;
+        max-width: 360px;
       }
 
       input[type="date"]::-webkit-date-and-time-value { text-align: center; }
@@ -217,6 +223,11 @@
 
       <section class="card">
         <div class="field">
+          <label for="siteName">現場名</label>
+          <input id="siteName" type="text" placeholder="例：博多区〇〇様邸" autocomplete="off" />
+        </div>
+
+        <div class="field">
           <label for="contractDate">契約日</label>
           <input id="contractDate" type="date" />
         </div>
@@ -262,6 +273,7 @@
     </main>
 
     <script>
+      const siteName = document.getElementById('siteName');
       const contractDate = document.getElementById('contractDate');
       const startDate = document.getElementById('startDate');
       const handoverDate = document.getElementById('handoverDate');
@@ -399,6 +411,7 @@
       handoverDate.addEventListener('change', renderResults);
 
       resetBtn.addEventListener('click', () => {
+        siteName.value = '';
         contractDate.value = '';
         startDate.value = '';
         handoverDate.value = '';
